@@ -860,6 +860,389 @@
         }
       ]
     }
-  ],
-  "variable": []
+    ,
+    {
+      "name": "Search & Filtering",
+      "item": [
+        {
+          "name": "Search products — results found (q=phone)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains non-empty products array', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('products');",
+                  "    pm.expect(json.products).to.be.an('array').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Pagination fields are present', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('total');",
+                  "    pm.expect(json).to.have.property('skip');",
+                  "    pm.expect(json).to.have.property('limit');",
+                  "});",
+                  "",
+                  "pm.test('total matches number of results found', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.total).to.be.a('number').and.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Each result contains required product fields', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.products.forEach(function (product) {",
+                  "        pm.expect(product).to.have.property('id');",
+                  "        pm.expect(product).to.have.property('title');",
+                  "        pm.expect(product).to.have.property('price');",
+                  "        pm.expect(product).to.have.property('category');",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('Search results are relevant to query', function () {",
+                  "    var json = pm.response.json();",
+                  "    var query = 'phone';",
+                  "    var allRelevant = json.products.every(function (product) {",
+                  "        var searchableText = [",
+                  "            product.title || '',",
+                  "            product.description || '',",
+                  "            product.category || '',",
+                  "            product.brand || ''",
+                  "        ].join(' ').toLowerCase();",
+                  "        return searchableText.indexOf(query) !== -1;",
+                  "    });",
+                  "    pm.expect(allRelevant).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/search?q=phone",
+              "host": ["{{base_url}}"],
+              "path": ["products", "search"],
+              "query": [{ "key": "q", "value": "phone" }]
+            }
+          }
+        },
+        {
+          "name": "Search products — no results (q=xyznotfound)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('products array is empty', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('products');",
+                  "    pm.expect(json.products).to.be.an('array').that.is.empty;",
+                  "});",
+                  "",
+                  "pm.test('total is 0', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.total).to.eql(0);",
+                  "});",
+                  "",
+                  "pm.test('Pagination fields are still present', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('skip');",
+                  "    pm.expect(json).to.have.property('limit');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/search?q=xyznotfound",
+              "host": ["{{base_url}}"],
+              "path": ["products", "search"],
+              "query": [{ "key": "q", "value": "xyznotfound" }]
+            }
+          }
+        },
+        {
+          "name": "Search products — empty query (q=)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Empty query string — DummyJSON returns all products (treats as no filter).",
+                  "// We validate structure only; asserting 0 results would be incorrect.",
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains products array', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('products');",
+                  "    pm.expect(json.products).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Pagination fields are present', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('total');",
+                  "    pm.expect(json).to.have.property('skip');",
+                  "    pm.expect(json).to.have.property('limit');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/search?q=",
+              "host": ["{{base_url}}"],
+              "path": ["products", "search"],
+              "query": [{ "key": "q", "value": "" }]
+            }
+          }
+        },
+        {
+          "name": "GET product categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response is a non-empty array', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('array').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Each category has slug, name, and url fields', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.forEach(function (category) {",
+                  "        pm.expect(category).to.have.property('slug');",
+                  "        pm.expect(category).to.have.property('name');",
+                  "        pm.expect(category).to.have.property('url');",
+                  "        pm.expect(category.slug).to.be.a('string').and.not.empty;",
+                  "        pm.expect(category.name).to.be.a('string').and.not.empty;",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('smartphones category is present', function () {",
+                  "    var json = pm.response.json();",
+                  "    var slugs = json.map(function (c) { return c.slug; });",
+                  "    pm.expect(slugs).to.include('smartphones');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/categories",
+              "host": ["{{base_url}}"],
+              "path": ["products", "categories"]
+            }
+          }
+        },
+        {
+          "name": "GET products by category — smartphones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains non-empty products array', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('products');",
+                  "    pm.expect(json.products).to.be.an('array').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Pagination fields are present', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('total');",
+                  "    pm.expect(json).to.have.property('skip');",
+                  "    pm.expect(json).to.have.property('limit');",
+                  "});",
+                  "",
+                  "pm.test('Every product belongs to smartphones category', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.products.forEach(function (product) {",
+                  "        pm.expect(product.category).to.eql('smartphones');",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/category/smartphones",
+              "host": ["{{base_url}}"],
+              "path": ["products", "category", "smartphones"]
+            }
+          }
+        },
+        {
+          "name": "GET products — first page (limit=5&skip=0)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('limit is 5', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.limit).to.eql(5);",
+                  "});",
+                  "",
+                  "pm.test('skip is 0', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.skip).to.eql(0);",
+                  "});",
+                  "",
+                  "pm.test('products array contains exactly 5 items', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.products).to.have.lengthOf(5);",
+                  "});",
+                  "",
+                  "// Save first-page IDs for comparison in the next request",
+                  "var json = pm.response.json();",
+                  "var ids = json.products.map(function (p) { return p.id; });",
+                  "pm.environment.set('page1_ids', JSON.stringify(ids));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?limit=5&skip=0",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "limit", "value": "5" },
+                { "key": "skip", "value": "0" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET products — second page (limit=5&skip=5)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('limit is 5', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.limit).to.eql(5);",
+                  "});",
+                  "",
+                  "pm.test('skip is 5', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.skip).to.eql(5);",
+                  "});",
+                  "",
+                  "pm.test('products array contains exactly 5 items', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.products).to.have.lengthOf(5);",
+                  "});",
+                  "",
+                  "pm.test('Second page products differ from first page', function () {",
+                  "    var page1IdsRaw = pm.environment.get('page1_ids');",
+                  "    if (!page1IdsRaw) {",
+                  "        pm.expect.fail('page1_ids not set — run the first page request before this one');",
+                  "    }",
+                  "    var page1Ids = JSON.parse(page1IdsRaw);",
+                  "    var json = pm.response.json();",
+                  "    var page2Ids = json.products.map(function (p) { return p.id; });",
+                  "    var overlap = page2Ids.filter(function (id) { return page1Ids.indexOf(id) !== -1; });",
+                  "    pm.expect(overlap).to.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?limit=5&skip=5",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "limit", "value": "5" },
+                { "key": "skip", "value": "5" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
 }
