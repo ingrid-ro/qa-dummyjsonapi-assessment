@@ -1,0 +1,450 @@
+{
+  "info": {
+    "_postman_id": "d4e5f6a7-b8c9-4d0e-a1f2-b3c4d5e6f7a8",
+    "name": "DummyJSON API",
+    "description": "QA assessment collection for the DummyJSON REST API. Base URL: https://dummyjson.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login — valid credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains expected user fields', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json).to.have.property('username');",
+                  "    pm.expect(json).to.have.property('email');",
+                  "    pm.expect(json).to.have.property('firstName');",
+                  "    pm.expect(json).to.have.property('lastName');",
+                  "});",
+                  "",
+                  "pm.test('Response contains token', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('accessToken');",
+                  "    pm.expect(json.accessToken).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response contains refreshToken', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('refreshToken');",
+                  "    pm.expect(json.refreshToken).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Username matches requested user', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.username).to.eql('emilys');",
+                  "});",
+                  "",
+                  "// Save token to environment for subsequent requests",
+                  "var json = pm.response.json();",
+                  "if (json.accessToken) {",
+                  "    pm.environment.set('token', json.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"emilys\",\n  \"password\": \"emilyspass\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login — wrong password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "    pm.expect(json.message).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response does not contain a token', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property('accessToken');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"emilys\",\n  \"password\": \"wrongpassword\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login — non-existent user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "    pm.expect(json.message).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response does not contain a token', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property('accessToken');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"ghostuser99\",\n  \"password\": \"doesnotmatter\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login — missing username",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "    pm.expect(json.message).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response does not contain a token', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property('accessToken');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"emilyspass\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login — missing password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "    pm.expect(json.message).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response does not contain a token', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property('accessToken');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"emilys\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "GET /auth/me — valid token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains expected user fields', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json).to.have.property('username');",
+                  "    pm.expect(json).to.have.property('email');",
+                  "    pm.expect(json).to.have.property('firstName');",
+                  "    pm.expect(json).to.have.property('lastName');",
+                  "});",
+                  "",
+                  "pm.test('id is a number', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test('username is a non-empty string', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.username).to.be.a('string').and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "GET /auth/me — invalid token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// NOTE: DummyJSON returns 500 instead of 401 for a malformed/invalid token.",
+                  "// This is an API bug — the correct status for an invalid credential is 401.",
+                  "// Test is written to match actual API behaviour, not the expected behaviour.",
+                  "pm.test('Status is 500 (API bug: should be 401)', function () {",
+                  "    pm.response.to.have.status(500);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "    pm.expect(json.message).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response does not expose user data', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property('username');",
+                  "    pm.expect(json).to.not.have.property('email');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer thisisnotavalidtoken.fakejwt.abc123"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "GET /auth/me — no token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "    pm.expect(json.message).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response does not expose user data', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property('username');",
+                  "    pm.expect(json).to.not.have.property('email');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": []
+}
