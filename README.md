@@ -69,6 +69,38 @@ Invalid inputs, non-existent resources, and malformed requests.
 
 ---
 
+## Running the Tests
+
+### Prerequisites
+
+Install [Newman](https://learning.postman.com/docs/collections/using-newman-cli/installing-running-newman/) and the HTML reporter globally:
+
+```bash
+npm install -g newman newman-reporter-htmlextra
+```
+
+### Run the collection
+
+```bash
+./run-tests.sh
+```
+
+This runs all 29 requests against `https://dummyjson.com`, prints results to the terminal, and generates an HTML report.
+
+### View the report
+
+Open the report in your browser after the run:
+
+```bash
+open docs/screenshots/report.html        # macOS
+xdg-open docs/screenshots/report.html   # Linux
+start docs/screenshots/report.html      # Windows
+```
+
+The report is saved to `docs/screenshots/report.html` and **overwritten on every run**.
+
+---
+
 ## Docs
 
 See [`/docs/API_DECISIONS.md`](./docs/API_DECISIONS.md) for notes on testing decisions and observations made during this assessment.

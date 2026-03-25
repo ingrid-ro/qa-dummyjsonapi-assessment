@@ -28,14 +28,4 @@ The test for this case (`POST add product — empty body`) has been updated to a
 
 Test result screenshots are stored in [`/docs/screenshots/`](./screenshots/).
 
-Suggested naming convention:
-
-| File name | Contents |
-|-----------|----------|
-| `auth_folder_results.png` | Postman test run results for the Auth folder |
-| `products_folder_results.png` | Postman test run results for the Products folder |
-| `search_filtering_folder_results.png` | Postman test run results for the Search & Filtering folder |
-| `error_handling_folder_results.png` | Postman test run results for the Error Handling folder |
-| `full_collection_run.png` | Collection Runner summary showing all 29 requests / 142 tests |
-
 To capture: run each folder (or the full collection) via the Postman Collection Runner, then screenshot the results panel.
