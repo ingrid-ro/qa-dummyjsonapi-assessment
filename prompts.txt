@@ -10,3 +10,4 @@
 2026-03-25T00:09:00Z | Created /docs/screenshots/ folder and added Screenshots section to API_DECISIONS.md with suggested naming convention and instructions for capturing Postman Collection Runner results.
 2026-03-25T00:10:00Z | Created run-tests.sh: executable Newman script that runs the full collection with cli+htmlextra reporters, saves report to docs/screenshots/report.html (overwrites on each run), cd's to project root for consistent relative paths, and checks for both newman and newman-reporter-htmlextra before running.
 2026-03-25T00:11:00Z | Added "Running the Tests" section to README.md covering Newman install, ./run-tests.sh usage, browser open commands for macOS/Linux/Windows, and note that the report is overwritten on each run.
+2026-03-25T00:12:00Z | Created .gitignore covering node_modules, docs/screenshots/report.html, macOS (.DS_Store etc), Windows (Thumbs.db etc), Linux temp files, common editors (.vscode, .idea, vim swp), and .env files.
