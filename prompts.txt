@@ -1,0 +1,2 @@
+2026-03-25T00:00:00Z | Created CLAUDE.md with prompt logging instructions and initialized prompts.txt.
+2026-03-25T00:01:00Z | Set up base project structure: rewrote README.md, created /docs/API_DECISIONS.md (empty), and created /collections/ folder.
