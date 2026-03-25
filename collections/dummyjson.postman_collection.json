@@ -445,6 +445,421 @@
         }
       ]
     }
+    ,
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "GET all products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains products array', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('products');",
+                  "    pm.expect(json.products).to.be.an('array').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Pagination fields are present and are numbers', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('total');",
+                  "    pm.expect(json).to.have.property('skip');",
+                  "    pm.expect(json).to.have.property('limit');",
+                  "    pm.expect(json.total).to.be.a('number');",
+                  "    pm.expect(json.skip).to.be.a('number');",
+                  "    pm.expect(json.limit).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test('total is greater than 0', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.total).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('products array length does not exceed limit', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.products.length).to.be.at.most(json.limit);",
+                  "});",
+                  "",
+                  "pm.test('Each product has required fields', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.products.forEach(function (product) {",
+                  "        pm.expect(product).to.have.property('id');",
+                  "        pm.expect(product).to.have.property('title');",
+                  "        pm.expect(product).to.have.property('price');",
+                  "        pm.expect(product).to.have.property('category');",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            }
+          }
+        },
+        {
+          "name": "GET single product — ID 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains expected product fields', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json).to.have.property('title');",
+                  "    pm.expect(json).to.have.property('description');",
+                  "    pm.expect(json).to.have.property('price');",
+                  "    pm.expect(json).to.have.property('stock');",
+                  "    pm.expect(json).to.have.property('category');",
+                  "    pm.expect(json).to.have.property('thumbnail');",
+                  "    pm.expect(json).to.have.property('images');",
+                  "});",
+                  "",
+                  "pm.test('id matches requested ID', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(1);",
+                  "});",
+                  "",
+                  "pm.test('price is a positive number', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.price).to.be.a('number').and.above(0);",
+                  "});",
+                  "",
+                  "pm.test('images is a non-empty array', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.images).to.be.an('array').and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/1",
+              "host": ["{{base_url}}"],
+              "path": ["products", "1"]
+            }
+          }
+        },
+        {
+          "name": "GET single product — non-existent ID 99999",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "    pm.expect(json.message).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Response does not contain product data', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property('title');",
+                  "    pm.expect(json).to.not.have.property('price');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/99999",
+              "host": ["{{base_url}}"],
+              "path": ["products", "99999"]
+            }
+          }
+        },
+        {
+          "name": "POST add a new product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response reflects sent title', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.title).to.eql('Test Product');",
+                  "});",
+                  "",
+                  "pm.test('Response reflects sent price', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.price).to.eql(29.99);",
+                  "});",
+                  "",
+                  "pm.test('Response reflects sent stock', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.stock).to.eql(50);",
+                  "});",
+                  "",
+                  "pm.test('Response reflects sent category', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.category).to.eql('test-category');",
+                  "});",
+                  "",
+                  "pm.test('Response contains a generated id', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json.id).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Product\",\n  \"price\": 29.99,\n  \"stock\": 50,\n  \"brand\": \"TestBrand\",\n  \"category\": \"test-category\",\n  \"description\": \"A test product added via API\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products/add",
+              "host": ["{{base_url}}"],
+              "path": ["products", "add"]
+            }
+          }
+        },
+        {
+          "name": "PUT update product — ID 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('id matches updated product', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(1);",
+                  "});",
+                  "",
+                  "pm.test('Response reflects sent title', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.title).to.eql('iPhone 9 Updated');",
+                  "});",
+                  "",
+                  "pm.test('Response reflects sent price', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.price).to.eql(599.99);",
+                  "});",
+                  "",
+                  "pm.test('Response reflects sent stock', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.stock).to.eql(100);",
+                  "});",
+                  "",
+                  "pm.test('Response contains expected product fields', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json).to.have.property('title');",
+                  "    pm.expect(json).to.have.property('price');",
+                  "    pm.expect(json).to.have.property('category');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"iPhone 9 Updated\",\n  \"price\": 599.99,\n  \"stock\": 100,\n  \"brand\": \"Apple\",\n  \"category\": \"smartphones\",\n  \"description\": \"An updated Apple mobile smartphone\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products/1",
+              "host": ["{{base_url}}"],
+              "path": ["products", "1"]
+            }
+          }
+        },
+        {
+          "name": "PATCH partial update product — ID 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('id matches updated product', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(1);",
+                  "});",
+                  "",
+                  "pm.test('Response reflects patched price', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.price).to.eql(499.99);",
+                  "});",
+                  "",
+                  "pm.test('Response retains unpatched fields', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('title');",
+                  "    pm.expect(json).to.have.property('category');",
+                  "    pm.expect(json.title).to.be.a('string').and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 499.99\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products/1",
+              "host": ["{{base_url}}"],
+              "path": ["products", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE product — ID 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test('Response contains id of deleted product', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json.id).to.eql(1);",
+                  "});",
+                  "",
+                  "pm.test('Response contains isDeleted flag set to true', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('isDeleted');",
+                  "    pm.expect(json.isDeleted).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Response contains deletedOn timestamp', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('deletedOn');",
+                  "    pm.expect(json.deletedOn).to.be.a('string').and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/1",
+              "host": ["{{base_url}}"],
+              "path": ["products", "1"]
+            }
+          }
+        }
+      ]
+    }
   ],
   "variable": []
 }
