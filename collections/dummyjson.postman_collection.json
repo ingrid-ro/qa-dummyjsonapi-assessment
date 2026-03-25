@@ -5,12 +5,26 @@
     "description": "QA assessment collection for the DummyJSON REST API. Base URL: https://dummyjson.com",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (!pm.environment.get('base_url')) {",
+          "    pm.environment.set('base_url', 'https://dummyjson.com');",
+          "}"
+        ]
+      }
+    }
+  ],
   "item": [
     {
       "name": "Auth",
+      "description": "Login and token-based authentication flows against POST /auth/login and GET /auth/me.",
       "item": [
         {
-          "name": "Login — valid credentials",
+          "name": "POST /auth/login — valid credentials",
           "event": [
             {
               "listen": "test",
@@ -85,7 +99,7 @@
           }
         },
         {
-          "name": "Login — wrong password",
+          "name": "POST /auth/login — wrong password",
           "event": [
             {
               "listen": "test",
@@ -139,7 +153,7 @@
           }
         },
         {
-          "name": "Login — non-existent user",
+          "name": "POST /auth/login — non-existent user",
           "event": [
             {
               "listen": "test",
@@ -193,7 +207,7 @@
           }
         },
         {
-          "name": "Login — missing username",
+          "name": "POST /auth/login — missing username",
           "event": [
             {
               "listen": "test",
@@ -247,7 +261,7 @@
           }
         },
         {
-          "name": "Login — missing password",
+          "name": "POST /auth/login — missing password",
           "event": [
             {
               "listen": "test",
@@ -448,9 +462,10 @@
     ,
     {
       "name": "Products",
+      "description": "Full CRUD operations against the /products endpoint — create, read, update, and delete.",
       "item": [
         {
-          "name": "GET all products",
+          "name": "GET /products — all products",
           "event": [
             {
               "listen": "test",
@@ -515,7 +530,7 @@
           }
         },
         {
-          "name": "GET single product — ID 1",
+          "name": "GET /products/:id — ID 1",
           "event": [
             {
               "listen": "test",
@@ -571,7 +586,7 @@
           }
         },
         {
-          "name": "GET single product — non-existent ID 99999",
+          "name": "GET /products/:id — non-existent ID 99999",
           "event": [
             {
               "listen": "test",
@@ -612,7 +627,7 @@
           }
         },
         {
-          "name": "POST add a new product",
+          "name": "POST /products/add — new product",
           "event": [
             {
               "listen": "test",
@@ -681,7 +696,7 @@
           }
         },
         {
-          "name": "PUT update product — ID 1",
+          "name": "PUT /products/:id — full update ID 1",
           "event": [
             {
               "listen": "test",
@@ -752,7 +767,7 @@
           }
         },
         {
-          "name": "PATCH partial update product — ID 1",
+          "name": "PATCH /products/:id — partial update ID 1",
           "event": [
             {
               "listen": "test",
@@ -812,7 +827,7 @@
           }
         },
         {
-          "name": "DELETE product — ID 1",
+          "name": "DELETE /products/:id — ID 1",
           "event": [
             {
               "listen": "test",
@@ -863,9 +878,10 @@
     ,
     {
       "name": "Search & Filtering",
+      "description": "Product search by query string, category filtering, and offset-based pagination.",
       "item": [
         {
-          "name": "Search products — results found (q=phone)",
+          "name": "GET /products/search — results found (q=phone)",
           "event": [
             {
               "listen": "test",
@@ -938,7 +954,7 @@
           }
         },
         {
-          "name": "Search products — no results (q=xyznotfound)",
+          "name": "GET /products/search — no results (q=xyznotfound)",
           "event": [
             {
               "listen": "test",
@@ -985,7 +1001,7 @@
           }
         },
         {
-          "name": "Search products — empty query (q=)",
+          "name": "GET /products/search — empty query (q=)",
           "event": [
             {
               "listen": "test",
@@ -1030,7 +1046,7 @@
           }
         },
         {
-          "name": "GET product categories",
+          "name": "GET /products/categories — all categories",
           "event": [
             {
               "listen": "test",
@@ -1081,7 +1097,7 @@
           }
         },
         {
-          "name": "GET products by category — smartphones",
+          "name": "GET /products/category/:slug — smartphones",
           "event": [
             {
               "listen": "test",
@@ -1130,7 +1146,7 @@
           }
         },
         {
-          "name": "GET products — first page (limit=5&skip=0)",
+          "name": "GET /products — page 1 (limit=5, skip=0)",
           "event": [
             {
               "listen": "test",
@@ -1183,7 +1199,7 @@
           }
         },
         {
-          "name": "GET products — second page (limit=5&skip=5)",
+          "name": "GET /products — page 2 (limit=5, skip=5)",
           "event": [
             {
               "listen": "test",
@@ -1247,9 +1263,10 @@
     ,
     {
       "name": "Error Handling",
+      "description": "Invalid inputs, non-existent resources, and malformed requests — verifying consistent error response structure.",
       "item": [
         {
-          "name": "GET product — invalid ID (0)",
+          "name": "GET /products/:id — invalid ID (0)",
           "event": [
             {
               "listen": "test",
@@ -1291,7 +1308,7 @@
           }
         },
         {
-          "name": "GET product — negative ID (-1)",
+          "name": "GET /products/:id — negative ID (-1)",
           "event": [
             {
               "listen": "test",
@@ -1333,7 +1350,7 @@
           }
         },
         {
-          "name": "GET product — string ID (abc)",
+          "name": "GET /products/:id — string ID (abc)",
           "event": [
             {
               "listen": "test",
@@ -1375,7 +1392,7 @@
           }
         },
         {
-          "name": "POST add product — empty body",
+          "name": "POST /products/add — empty body",
           "event": [
             {
               "listen": "test",
@@ -1434,7 +1451,7 @@
           }
         },
         {
-          "name": "POST login — invalid JSON body",
+          "name": "POST /auth/login — invalid JSON body",
           "event": [
             {
               "listen": "test",
@@ -1492,7 +1509,7 @@
           }
         },
         {
-          "name": "GET user — non-existent ID (99999)",
+          "name": "GET /users/:id — non-existent ID (99999)",
           "event": [
             {
               "listen": "test",
@@ -1535,7 +1552,7 @@
           }
         },
         {
-          "name": "DELETE product — non-existent ID (99999)",
+          "name": "DELETE /products/:id — non-existent ID (99999)",
           "event": [
             {
               "listen": "test",

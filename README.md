@@ -31,30 +31,41 @@ This is a QA assessment project that tests the DummyJSON public REST API using P
 
 3. Select the environment from the dropdown before running any requests.
 
+> **Note:** The collection includes a pre-request script that sets `base_url` to `https://dummyjson.com` automatically if the variable is missing from the active environment.
+
 ---
 
 ## What's Covered
 
-### Auth
-- Login with valid credentials
-- Login with invalid credentials (error handling)
-- Token persistence across requests
+### Auth — 8 requests · 35 tests
+Login and token-based authentication flows against `POST /auth/login` and `GET /auth/me`.
 
-### Products CRUD
-- GET all products
-- GET single product by ID
-- POST create a product
-- PUT update a product
-- DELETE a product
+- Valid login — saves `accessToken` to `{{token}}` environment variable
+- Wrong password, non-existent user, missing username, missing password
+- `GET /auth/me` with valid token, invalid token, no token
 
-### Search
-- Search products by query string
-- Validate search results match query
+### Products — 7 requests · 41 tests
+Full CRUD operations against the `/products` endpoint.
 
-### Error Handling
-- 404 for non-existent resources
-- 400 / 401 for bad or missing auth
-- Response structure validation on errors
+- GET all products (with pagination field validation)
+- GET single product by ID, GET non-existent ID
+- POST create, PUT full update, PATCH partial update, DELETE
+
+### Search & Filtering — 7 requests · 37 tests
+Product search by query string, category filtering, and offset-based pagination.
+
+- Search with results, no results, and empty query string
+- GET all categories, GET products by category (result membership validated)
+- Page 1 and page 2 with limit/skip (cross-page ID overlap check)
+
+### Error Handling — 7 requests · 29 tests
+Invalid inputs, non-existent resources, and malformed requests.
+
+- Invalid product ID (0), negative ID (-1), string ID (abc)
+- POST with empty body, POST with invalid JSON
+- GET non-existent user, DELETE non-existent product
+
+**Total: 29 requests · 142 tests**
 
 ---
 
